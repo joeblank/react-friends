@@ -8,7 +8,7 @@ class App extends React.Component {
                 <h1>The <strong>facebook</strong> Friend Machine</h1>
 
                 <div className="friends">
-                  {FriendsList}
+                  <FriendsList />
                 </div>
             </div>
         );

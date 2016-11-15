@@ -1,4 +1,6 @@
 import React from "react";
+import Friend from './Friend.js';
+import friends from './../../friends.js';
 
 class FriendsList extends React.Component {
     constructor( props ) {
@@ -11,7 +13,27 @@ class FriendsList extends React.Component {
         };
     }
 
+    handleChange( field, event ) {
+        this.setState( { [ field ]: event.target.value } );
+    }
+
     render() {
+      const friendsList = friends
+    .filter( friend => friend.name.toLowerCase().indexOf( this.state.searchText.toLowerCase() ) !== -1 )
+    .sort( ( a, b ) => a[ this.state.orderBy ] > b[ this.state.orderBy ] )
+    .map( friend => (
+        <Friend
+            currentLocation={ friend.current_location || {} }
+            friendCount={ friend.friend_count }
+            key={ friend.$$hashKey }
+            name={ friend.name }
+            pictureUrl={ friend.pic_square }
+            status={ friend.status ? friend.status.message : "" }
+        />
+    ) );
+
+const displayFriends = this.state.order === "ascending" ? friendsList : friendsList.slice().reverse();
+
         return (
             <div>
                 <form
@@ -22,12 +44,14 @@ class FriendsList extends React.Component {
 
                         <input
                             className="form-control"
-                            placeholder="Search Anything For Friends"
+                            onChange={ this.handleChange.bind( this, "searchText" ) }
+                            placeholder="Search For Friends"
                             value={ this.state.searchText }
                         />
 
                         <select
                             className="input-medium"
+                            onChange={ this.handleChange.bind( this, "orderBy" ) }
                             value={ this.state.orderBy }
                         >
                             <option value="name">Name</option>
@@ -36,16 +60,18 @@ class FriendsList extends React.Component {
 
                         <select
                             className="input-medium"
+                            onChange={ this.handleChange.bind( this, "order" ) }
                             value={ this.state.order }
                         >
-                            <option value="descending">Descending</option>
-                            <option value="ascending">Ascending</option>
+                            <option value={ "descending" }>Descending</option>
+                            <option value={ "ascending" }>Ascending</option>
                         </select>
 
                     </div>
                 </form>
 
                 <ul>
+                {friendsList}
                 </ul>
             </div>
         );
